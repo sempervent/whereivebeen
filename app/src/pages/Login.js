@@ -11,7 +11,7 @@ const Login = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch('http://localhost:8000/login', { // Ensure URL matches your API endpoint
+            const response = await fetch('http://backend:8000/token', { // Ensure URL matches your API endpoint
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

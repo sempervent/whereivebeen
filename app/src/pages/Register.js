@@ -17,7 +17,7 @@ const Register = () => {
         };
 
         // API endpoint to which the registration request is sent
-        const API_URL = 'http://localhost:8000/register'; // Adjust based on your actual backend URL
+        const API_URL = 'http://backend:8000/register'; // Adjust based on your actual backend URL
 
         try {
             const response = await fetch(API_URL, {

@@ -37,9 +37,8 @@ async def shutdown():
 
 
 @app.post("/token")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user_query = User.select().where(User.c.username == form_data.username)
-    user = await database.fetch_one(user_query)
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == form_data.username).first()
     if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     access_token = create_access_token(data={"sub": user["username"]})
@@ -107,7 +106,6 @@ async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
         }
     else:
         raise HTTPException(status_code=404, detail="User not found")
-
 
 
 @app.post("/register", response_model=UserCreate)

@@ -1,7 +1,7 @@
 // src/utils/auth.js
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000'; // Adjust this URL based on your backend's URL
+const API_BASE_URL = 'http://backend:8000'; // Adjust this URL based on your backend's URL
 
 // Function to login a user
 export const login = async (username, password) => {
