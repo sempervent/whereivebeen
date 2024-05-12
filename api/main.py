@@ -84,7 +84,8 @@ async def api_add_county_to_user(
         add_county_to_user(db, user_id, county_id)
         return {"message": "County added to user"}
     except HTTPException as e:
-        raise e
+        logger.warning(f"error: {e}")
+        return {}
 
 
 @app.delete("/users/{user_id}/counties/{county_id}")
