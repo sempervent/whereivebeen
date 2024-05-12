@@ -6,14 +6,18 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password
+      POSTGRES_DB: county_db
     ports:
       - "5432:5432"
 
   backend:
+    env_file:
+      - .env
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -33,7 +37,7 @@ services:
     volumes:
       - ./app:/app
     ports:
-      - "5000:5000"
+      - "5080:5000"
     depends_on:
       - backend
 

@@ -6,7 +6,7 @@ from jose import jwt, JWTError
 
 from .settings import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
 from .db import database
-from .models import users
+from .models import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -34,6 +34,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
+        users = User()
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:

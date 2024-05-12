@@ -6,13 +6,16 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
-fastapi = "*"
 uvicorn = "*"
 databases = "*"
 asyncpg = "*"
 geoalchemy2 = "*"
 sqlalchemy = "*"
 pydantic = "*"
+psycopg2-binary = "*"
+passlib = "*"
+fastapi = {extras = ["all"], version = "*"}
+python-jose = "*"
 
 [dev-packages]
 ruff = "*"

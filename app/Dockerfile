@@ -19,8 +19,8 @@ RUN npm run build
 # Install serve to serve the build folder
 RUN npm install -g serve
 
-# Expose port 5000 where serve runs the application
-EXPOSE 5000
+# Expose port 3000 where serve runs the application
+EXPOSE 3000
 
 # Run serve to dish out the build directory
 CMD ["serve", "-s", "build", "-l", "5000"]
