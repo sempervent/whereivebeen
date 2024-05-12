@@ -36,11 +36,11 @@ const CountyMap = ({ onCountyClick }) => {
                 onEachFeature: (feature, layer) => {
                     layer.on('click', () => onCountyClick(feature));
                     layer.setStyle({
-                        fillColor: '#fc4e2a',
-                        weight: 2,
+                        fillColor: 'red',
+                        weight: 1,
                         opacity: 1,
-                        color: 'white',
-                        fillOpacity: 0.5
+                        color: 'black',
+                        fillOpacity: 0.0
                     });
                 }
             }).addTo(mapRef.current);

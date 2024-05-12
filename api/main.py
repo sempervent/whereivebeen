@@ -19,7 +19,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://frontend:3000', 'http://localhost:3000'],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -39,6 +39,7 @@ async def shutdown():
 
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    logger.info(f"{form_data.username} is logging in")
     user = db.query(User).filter(User.username == form_data.username).first()
     logger.info(f"User: {user}")
     if not user or not verify_password(form_data.password, user.hashed_password):

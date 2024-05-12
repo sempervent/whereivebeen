@@ -1,29 +1,12 @@
 // src/utils/auth.js
-import axios from 'axios';
-
-const API_BASE_URL = 'http://localhost:8000'; // Adjust this URL based on your backend's URL
-
-// Function to login a user
-export const login = async (username, password) => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/token`, { username, password });
-        const { access_token } = response.data;
-        localStorage.setItem('accessToken', access_token);
-        return response.data;
-    } catch (error) {
-        console.error('Authentication failed:', error);
-        throw error;
-    }
-};
-
 // Function to logout a user
 export const logout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem('token');
 };
 
 // Helper function to get the access token from local storage
 export const getAccessToken = () => {
-    return localStorage.getItem('accessToken');
+    return localStorage.getItem('token');
 };
 
 // Utility to check if the user is logged in
@@ -42,13 +25,4 @@ export const getAuthHeaders = () => {
     }
 };
 
-// Optionally, you can add a function to handle user registration
-export const register = async (username, password) => {
-    try {
-        const response = await axios.post(`${API_BASE_URL}/users/`, { username, password });
-        return response.data;
-    } catch (error) {
-        console.error('Registration failed:', error);
-        throw error;
-    }
-};
+

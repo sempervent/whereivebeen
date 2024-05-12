@@ -1,7 +1,8 @@
+//src/pages/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ setAuth }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -10,27 +11,30 @@ const Login = () => {
     const handleLogin = async (event) => {
         event.preventDefault();
 
+        const formBody = new URLSearchParams();
+        formBody.append('username', username);
+        formBody.append('password', password);
+
         try {
-            const response = await fetch('http://localhost:8000/token', { // Ensure URL matches your API endpoint
+            const response = await fetch('http://localhost:8000/token', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: JSON.stringify({ username, password })
+                body: formBody.toString()
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(
+                    `HTTP error! Status: ${response.status}, Message: ${errorData.detail}`);
             }
 
             const data = await response.json();
+            localStorage.setItem('token', data.access_token);
             console.log('Login successful:', data);
-
-            // Assuming the token is returned in data.token
-            localStorage.setItem('token', data.token);
-
-            // Redirect to a protected route or home page after successful login
-            navigate('/dashboard'); // Adjust as needed
+            setAuth(true);
+            navigate('/dashboard');
         } catch (error) {
             console.error('Login failed:', error);
             setError('Failed to log in. Please check your credentials.');
