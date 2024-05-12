@@ -1,6 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 
@@ -9,7 +9,7 @@ from .db import database
 from .models import users
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated='auto')
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def verify_password(plain_password, hashed_password):
@@ -45,4 +45,3 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         return user
     except JWTError as e:
         raise HTTPException(status_code=401, detail="Invalid token") from e
-    

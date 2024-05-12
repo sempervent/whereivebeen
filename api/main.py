@@ -1,17 +1,15 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Body
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session, sessionmaker
 
-from be.auth import oauth2_scheme, pwd_context
-from be.db import database, DATABASE_URL, engine
-from be.settings import SECRET_KEY
+from be.db import database, engine
 from be.auth import verify_password, create_access_token, get_password_hash
 from be.models import User, County
 
 app = FastAPI(
     title="Where I've Been API",
     description="This API allows users to manage counties and user interactions for the County Selector app.",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 SessionLocal = sessionmaker(autocmmit=False, autoflush=False, bind=engine)
@@ -32,9 +30,9 @@ async def shutdown():
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
     user_query = User.select().where(User.c.username == form_data.username)
     user = await database.fetch_one(user_query)
-    if not user or not verify_password(form_data.password, user['hashed_password']):
+    if not user or not verify_password(form_data.password, user["hashed_password"]):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token = create_access_token(data={"sub": user['username']})
+    access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -67,7 +65,9 @@ async def create_user(username: str = Body(...), password: str = Body(...)):
 
 
 @app.post("/users/{user_id}/counties/{county_id}")
-async def add_county_to_user(user_id: int, county_id: int, db: Session = Depends(get_db)):
+async def add_county_to_user(
+    user_id: int, county_id: int, db: Session = Depends(get_db)
+):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -81,7 +81,9 @@ async def add_county_to_user(user_id: int, county_id: int, db: Session = Depends
 
 
 @app.delete("/users/{user_id}/counties/{county_id}")
-async def remove_county_from_user(user_id: int, county_id: int, db: Session = Depends(get_db)):
+async def remove_county_from_user(
+    user_id: int, county_id: int, db: Session = Depends(get_db)
+):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -98,9 +100,15 @@ async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return {"counties": [{"id": county.id, "fips_code": county.fips_code, "name": county.name} for county in user.counties]}
+    return {
+        "counties": [
+            {"id": county.id, "fips_code": county.fips_code, "name": county.name}
+            for county in user.counties
+        ]
+    }
 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
