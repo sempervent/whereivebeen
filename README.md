@@ -1,5 +1,5 @@
 # whereivebeen
-# County Selector Application
+# Where I've Been Application
 
 This project is a full-stack web application that allows users to select and manage U.S. counties using an interactive map. The backend is built with FastAPI and utilizes a PostGIS database for geospatial operations, while the frontend is developed using React and Leaflet for map interactions.
 
@@ -29,8 +29,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourrepository/county-selector.git
-   cd county-selector
+   git clone https://github.com/sempervent/whereivebeen.git
+   cd whereivebeen
 
     Set up the Backend
 
@@ -39,13 +39,13 @@ These instructions will get you a copy of the project up and running on your loc
     bash
 
 cd backend
-docker build -t county-selector-backend .
+docker build -t backend .
 
 Run the Docker container:
 
 bash
 
-docker run -p 8000:8000 county-selector-backend
+docker run -p 8000:8000 backend
 
 Set up the Frontend
 
@@ -54,13 +54,13 @@ Navigate to the frontend directory and build the Docker container:
 bash
 
 cd ../frontend
-docker build -t county-selector-frontend .
+docker build -t frontend .
 
 Run the Docker container:
 
 bash
 
-    docker run -p 5000:5000 county-selector-frontend
+    docker run -p 5000:5000 frontend
 
 Usage
 

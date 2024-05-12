@@ -13,7 +13,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Where I've Been API",
-    description="This API allows users to manage counties and user interactions for the County Selector app.",
+    description="This API allows users to manage counties and user interactions for the Where I've Been app.",
     version="1.0.0",
 )
 
@@ -45,7 +45,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     access_token = create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"access_token": access_token, "token_type": "bearer", 'user_id': user.id}
 
 
 @app.get("/counties/")

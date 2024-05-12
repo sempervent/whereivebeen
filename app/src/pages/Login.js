@@ -32,7 +32,9 @@ const Login = ({ setAuth }) => {
 
             const data = await response.json();
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('userId', data.user_id);
             console.log('Login successful:', data);
+            console.log('userID:', data.user_id);
             setAuth(true);
             navigate('/dashboard');
         } catch (error) {
