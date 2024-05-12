@@ -14,13 +14,14 @@ RUN npm install
 COPY . .
 
 # Build the project for production
-RUN npm run build
+RUN npm run build && ls -l /app/
 
 # Install serve to serve the build folder
 RUN npm install -g serve
 
-# Expose port 5000 where serve runs the application
-EXPOSE 5000
+# Expose port 3000 where serve runs the application
+EXPOSE 3000
 
 # Run serve to dish out the build directory
-CMD ["serve", "-s", "build", "-l", "5000"]
+#CMD ["serve", "-s", "build", "-l", "3000"]
+CMD ["npm", "start"]

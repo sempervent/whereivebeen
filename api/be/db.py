@@ -1,5 +1,4 @@
 from os import getenv
-from contextlib import contextmanager
 
 from databases import Database
 from sqlalchemy import create_engine, MetaData
@@ -26,7 +25,6 @@ engine = create_engine(make_db_url(protocol="postgresql"))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-@contextmanager
 def get_db():
     db = SessionLocal()
     try:

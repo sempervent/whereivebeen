@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Table
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from pydantic import BaseModel
 
 from .db import metadata
 
@@ -31,3 +32,8 @@ class County(Base):
     fips = Column(String, unique=True, nullable=False)
     name = Column(String, nullable=False)
     users = relationship("User", secondary=user_counties, back_populates="counties")
+
+
+class UserCreate(BaseModel):
+    username: str
+    password: str

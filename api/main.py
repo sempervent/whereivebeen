@@ -1,16 +1,27 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from be.db import database, get_db
-from be.auth import verify_password, create_access_token, get_password_hash
-from be.models import User, County
+from be.db import database, get_db, engine
+from be.auth import verify_password, create_access_token, get_password_hash, pwd_context
+from be.models import User, County, UserCreate, Base
 from be.logic import add_county_to_user, remove_county_from_user
+
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Where I've Been API",
     description="This API allows users to manage counties and user interactions for the County Selector app.",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['http://frontend:3000', 'http://localhost:3000'],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -96,6 +107,33 @@ async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
         }
     else:
         raise HTTPException(status_code=404, detail="User not found")
+
+
+
+@app.post("/register", response_model=UserCreate)
+def register_user(user: UserCreate, db: Session = Depends(get_db)):
+    if (
+        db_user := db.query(User)
+        .filter(User.username == user.username)
+        .first()
+    ):
+        raise HTTPException(status_code=400, detail="Username already registered")
+
+    # Hash the user's password
+    hashed_password = pwd_context.hash(user.password)
+
+    # Create new user instance
+    new_user = User(
+        username=user.username,
+        hashed_password=hashed_password
+    )
+
+    # Add to the database
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    return {"username": new_user.username, "id": new_user.id}
 
 
 if __name__ == "__main__":

@@ -1,20 +1,46 @@
-// src/pages/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [email, setEmail] = useState(''); // Optional, if you require email
+    const [error, setError] = useState(''); // To handle and display errors
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        // Here, implement your logic to call the backend API to register the user
-        console.log('Submitting:', username, password, email);
 
-        // On successful registration, redirect to login or another appropriate page
-        navigate('/login');
+        // Construct the user data payload
+        const userData = {
+            username,
+            password,
+        };
+
+        // API endpoint to which the registration request is sent
+        const API_URL = 'http://localhost:8000/register'; // Adjust based on your actual backend URL
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Registration successful:', data);
+
+            // Redirect user after successful registration
+            navigate('/login'); // Adjust as necessary, e.g., to a dashboard or login page
+        } catch (error) {
+            console.error('Failed to register:', error);
+            setError(error.message || 'Failed to register');
+        }
     };
 
     return (
@@ -29,10 +55,7 @@ const Register = () => {
                     Password:
                     <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </label>
-                <label>
-                    Email: {/* Optional */}
-                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                </label>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
                 <button type="submit">Register</button>
             </form>
         </div>
