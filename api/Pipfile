@@ -16,6 +16,7 @@ psycopg2-binary = "*"
 passlib = "*"
 fastapi = {extras = ["all"], version = "*"}
 python-jose = "*"
+loguru = "*"
 
 [dev-packages]
 ruff = "*"

@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from loguru import logger
 
 from be.db import database, get_db, engine
 from be.auth import verify_password, create_access_token, get_password_hash, pwd_context
@@ -39,9 +40,10 @@ async def shutdown():
 @app.post("/token")
 async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == form_data.username).first()
-    if not user or not verify_password(form_data.password, user["hashed_password"]):
+    logger.info(f"User: {user}")
+    if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
-    access_token = create_access_token(data={"sub": user["username"]})
+    access_token = create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
