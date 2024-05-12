@@ -15,10 +15,10 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./api
       dockerfile: Dockerfile
     volumes:
-      - ./backend:/app
+      - ./api:/app
     ports:
       - "8000:8000"
     depends_on:
@@ -28,11 +28,10 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./app
       dockerfile: Dockerfile
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./app:/app
     ports:
       - "5000:5000"
     depends_on:

@@ -42,3 +42,15 @@ C
 docker-compose.yaml,e/f/ef8def03dc8f162799089e9b5f4321201c8810d5
 4
 .env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
+7
+Pipfile,1/5/15af4b3d30054104e85f65a444b1db188c5deefb
+;
+api/Pipfile,0/8/08252cdd211c7ee4b91e9764a0319dc404e2bed8
+?
+api/be/logic.py,2/b/2bd07ffe522ece59bc3b0e9aaaaad814f712338d
+@
+app/package.json,6/4/64d8ff0a7258a7708d2e31553cb19915ba2dc051
+E
+app/public/index.html,7/8/78bb712840c5dd35af2e0e8eca52f90ee712aad6
+A
+app/src/index.css,e/5/e5fa17d68b31d9bb9b658b87a110a5f0c4d31974

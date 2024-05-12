@@ -1,18 +1,17 @@
 from fastapi import FastAPI, HTTPException, Depends, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
-from be.db import database, engine
+from be.db import database, get_db
 from be.auth import verify_password, create_access_token, get_password_hash
 from be.models import User, County
+from be.logic import add_county_to_user, remove_county_from_user
 
 app = FastAPI(
     title="Where I've Been API",
     description="This API allows users to manage counties and user interactions for the County Selector app.",
     version="1.0.0",
 )
-
-SessionLocal = sessionmaker(autocmmit=False, autoflush=False, bind=engine)
 
 
 # API endpoints
@@ -65,47 +64,38 @@ async def create_user(username: str = Body(...), password: str = Body(...)):
 
 
 @app.post("/users/{user_id}/counties/{county_id}")
-async def add_county_to_user(
+async def api_add_county_to_user(
     user_id: int, county_id: int, db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    county = db.query(County).filter(County.id == county_id).first()
-    if not county:
-        raise HTTPException(status_code=404, detail="County not found")
-    if county not in user.counties:
-        user.counties.append(county)
-        db.commit()
-    return {"message": "County added to user"}
+    try:
+        add_county_to_user(db, user_id, county_id)
+        return {"message": "County added to user"}
+    except HTTPException as e:
+        raise e
 
 
 @app.delete("/users/{user_id}/counties/{county_id}")
-async def remove_county_from_user(
+async def api_remove_county_from_user(
     user_id: int, county_id: int, db: Session = Depends(get_db)
 ):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    county = db.query(County).filter(County.id == county_id).first()
-    if not county:
-        raise HTTPException(status_code=404, detail="County not found")
-    user.counties.remove(county)
-    db.commit()
-    return {"message": "County removed from user"}
+    try:
+        remove_county_from_user(db, user_id, county_id)
+        return {"message": "County removed from user"}
+    except HTTPException as e:
+        raise e
 
 
 @app.get("/users/{user_id}/counties")
 async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
+    if user := db.query(User).filter(User.id == user_id).first():
+        return {
+            "counties": [
+                {"id": county.id, "fips_code": county.fips_code, "name": county.name}
+                for county in user.counties
+            ]
+        }
+    else:
         raise HTTPException(status_code=404, detail="User not found")
-    return {
-        "counties": [
-            {"id": county.id, "fips_code": county.fips_code, "name": county.name}
-            for county in user.counties
-        ]
-    }
 
 
 if __name__ == "__main__":

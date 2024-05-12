@@ -1,7 +1,7 @@
 // src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css'; // Ensure you have an index.css for basic styling
+import './index.css';
 import App from './App';
 
 ReactDOM.render(
