@@ -38,3 +38,7 @@ B
 api/Dockerfile,6/0/6075ea24460a205837c509828ecbe49b393162e9
 >
 app/Dockerfile,5/d/5d8074d9184bc0aa6ac86ff50904bbf6415a82ec
+C
+docker-compose.yaml,e/f/ef8def03dc8f162799089e9b5f4321201c8810d5
+4
+.env,3/c/3c84dcdc6bbe3d7817c49dcdc327b926fea1808a
