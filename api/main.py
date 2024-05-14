@@ -6,7 +6,7 @@ from loguru import logger
 
 from be.db import database, get_db, engine
 from be.auth import verify_password, create_access_token, get_password_hash, pwd_context
-from be.models import User, County, UserCreate, Base
+from be.models import User, County, UserCreate, Base, UserResponse
 from be.logic import add_county_to_user, remove_county_from_user
 
 Base.metadata.create_all(bind=engine)
@@ -112,7 +112,7 @@ async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
 
-@app.post("/register", response_model=UserCreate)
+@app.post("/register", response_model=UserResponse, status_code=201)
 def register_user(user: UserCreate, db: Session = Depends(get_db)):
     if (
         db_user := db.query(User)

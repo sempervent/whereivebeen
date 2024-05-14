@@ -17,7 +17,7 @@ const Register = () => {
         };
 
         // API endpoint to which the registration request is sent
-        const API_URL = 'http://localhost:8000/register'; // Adjust based on your actual backend URL
+        const API_URL = 'http://localhost:8000/register';
 
         try {
             const response = await fetch(API_URL, {
@@ -36,7 +36,7 @@ const Register = () => {
             console.log('Registration successful:', data);
 
             // Redirect user after successful registration
-            navigate('/login'); // Adjust as necessary, e.g., to a dashboard or login page
+            navigate('/login');
         } catch (error) {
             console.error('Failed to register:', error);
             setError(error.message || 'Failed to register');
