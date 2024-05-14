@@ -6,10 +6,9 @@ import { fetchUserCounties, addCountyToUser, removeCountyFromUser } from '../api
 
 const CountyMap = ({ userId }) => {
     const mapRef = useRef(null);
-    const [countiesData, setCountiesData] = useState(null);
-    const [activeCounties, setActiveCounties] = useState(new Set());
+    const [geoJsonData, setGeoJsonData] = useState(null); // Separate state for GeoJSON data
+    const [activeCounties, setActiveCounties] = useState(new Set()); // Correctly initialized state for active counties
 
-    // Initialize the map and fetch counties data
     useEffect(() => {
         if (!userId) {
             console.error("UserId is undefined");
@@ -17,13 +16,16 @@ const CountyMap = ({ userId }) => {
         }
 
         // Fetch user-specific counties
-        fetchUserCounties(userId).then(data => {
-            const activeSet = new Set(data.map(county => county.id));
-            setActiveCounties(activeSet);
-            console.info('Loaded user counties:', activeSet);
-        }).catch(error => {
-            console.error("Error loading user counties:", error);
-        });
+        const fetchCounties = async () => {
+            try {
+                const userCounties = await fetchUserCounties(userId);
+                console.log('User counties:', userCounties);
+                setActiveCounties(new Set(userCounties)); // Correctly update active counties
+            } catch (error) {
+                console.error('Error fetching user counties:', error);
+            }
+        };
+        fetchCounties();
 
         // Initialize the map only once
         if (!mapRef.current) {
@@ -36,66 +38,54 @@ const CountyMap = ({ userId }) => {
                 maxZoom: 19,
                 attribution: '© OpenStreetMap'
             }).addTo(mapRef.current);
-
-            console.log('Map initialized');
         }
 
         // Fetch GeoJSON for counties
         fetch("https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json")
             .then(response => response.json())
             .then(data => {
-                console.log('GeoJSON', data);
-                setCountiesData(data);
-                console.log('GeoJSON data loaded');
+                setGeoJsonData(data); // Separate state for GeoJSON data
             }).catch(error => {
                 console.error("Error loading GeoJSON data:", error);
             });
 
-        return () => {
-            mapRef.current?.remove();
-        };
+        return () => mapRef.current?.remove();
     }, [userId]);
 
-    // Apply GeoJSON layers when data is available
     useEffect(() => {
-        if (countiesData && mapRef.current) {
-            const geoJsonLayer = L.geoJson(countiesData, {
+        if (geoJsonData && mapRef.current) {
+            const geoJsonLayer = L.geoJson(geoJsonData, {
                 onEachFeature: (feature, layer) => {
                     layer.on('click', () => {
                         const countyId = feature.properties.STATE + feature.properties.COUNTY;
-                        toggleCounty(countyId)
+                        toggleCounty(countyId);
                     });
                     const isActive = activeCounties.has(feature.properties.STATE + feature.properties.COUNTY);
                     layer.setStyle(getStyle(isActive));
                 }
             }).addTo(mapRef.current);
 
-            console.log('GeoJSON layers applied');
             return () => geoJsonLayer.remove();
         }
-    }, [countiesData, activeCounties]);
+    }, [geoJsonData, activeCounties]);
 
     // Toggle county selection
     const toggleCounty = (countyId) => {
-        console.log('Toggling county:', countyId, 'for user:', userId);
+        console.log('Toggling county:', countyId);
         const isActive = activeCounties.has(countyId);
         if (isActive) {
             removeCountyFromUser(userId, countyId).then(() => {
-                console.log('County removed:', countyId, 'for user:', userId);
                 const newSet = new Set(activeCounties);
                 newSet.delete(countyId);
                 setActiveCounties(newSet);
-                console.log('County removed:', countyId);
             }).catch(error => {
                 console.error("Error removing county:", error);
             });
         } else {
             addCountyToUser(userId, countyId).then(() => {
-                console.log('County added:', countyId, 'for user:', userId);
                 const newSet = new Set(activeCounties);
                 newSet.add(countyId);
                 setActiveCounties(newSet);
-                console.log('County added:', countyId);
             }).catch(error => {
                 console.error("Error adding county:", error);
             });

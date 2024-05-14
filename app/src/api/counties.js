@@ -20,6 +20,7 @@ export const fetchUserCounties = async (userId) => {
     }
     try {
         const response = await apiClient.get(`/users/${userId}/counties`);
+        console.log('Counties fetched:', response.data);
         // Extract counties from response data
         if (response.data && Array.isArray(response.data.counties)) {
             return response.data.counties;
@@ -41,6 +42,7 @@ export const addCountyToUser = async (userId, countyId) => {
     }
     try {
         const response = await apiClient.post(`/users/${userId}/counties/${countyId}`);
+        console.log('County added:', response.data)
         return response.data;
     } catch (error) {
         console.error('Failed to add county:', error);

@@ -28,9 +28,8 @@ class User(Base):
 class County(Base):
     __tablename__ = "counties"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
     fips = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
     users = relationship("User", secondary=user_counties, back_populates="counties")
 
 

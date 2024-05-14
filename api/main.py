@@ -104,7 +104,7 @@ async def list_user_counties(user_id: int, db: Session = Depends(get_db)):
     if user := db.query(User).filter(User.id == user_id).first():
         return {
             "counties": [
-                {"id": county.id, "fips_code": county.fips_code, "name": county.name}
+                county.fips
                 for county in user.counties
             ]
         }
